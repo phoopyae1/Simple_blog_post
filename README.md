@@ -18,7 +18,7 @@ Start development:
 
 ## Structure
 Main components: Posts, DetailPage, CreatePost
-Routes: Home (/), Detail (/DetailPage/:id), Create (/create)
+Routes: Home (/), Detail (/DetailPage/:id), AddNewPost (/AddNewPost)
 
 ## Validation
-Posts require title (3+ chars), author name, and content (50+ chars)
+Posts require title , author name, and content ,image not bigger than 100KB
