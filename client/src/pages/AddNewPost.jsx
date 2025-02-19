@@ -70,7 +70,7 @@ const AddNewPost = () => {
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                onChange={handleChange}
+                onChange={handleChange}             
                 onBlur={handleBlur}
                 value={values.author}
                 error={touched.author && Boolean(errors.author)}
