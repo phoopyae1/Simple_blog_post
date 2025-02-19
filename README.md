@@ -5,7 +5,7 @@ Simple blog application built with React and Material-UI. Features post creation
 
 ## Setup
 Install dependencies:
-`npm install @material-ui/core formik react-router-dom yup`
+`npm install 
 
 Start development:
 `npm start`
