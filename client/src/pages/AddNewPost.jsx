@@ -1,57 +1,86 @@
-import { Box, Button, Card, CardContent, CardHeader, Container, TextField } from '@material-ui/core';
-import { useFormik } from 'formik';
-import React, { useContext } from 'react'; // Import useContext
-import { basicSchema } from '../schemas';
-import { Textarea } from '@mui/joy';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import axios from 'axios'; // Import axios for making API calls
-import { PostContext } from '../components/Posts'; // Import PostContext
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Container,
+  TextField,
+} from "@material-ui/core";
+import { Textarea } from "@mui/joy";
+import { useFormik } from "formik";
+import React, { useCallback, useContext } from "react";
+import { useHistory } from "react-router-dom";
+import { PostContext } from "../components/PostProvider";
+import { basicSchema } from "../schemas";
 
-const onSubmit = async (values, actions, addPost, handleAddNewPost) => {
-  console.log(values);
-  const reader = new FileReader();
-  reader.readAsDataURL(values.image);
-  reader.onloadend = async () => {
-    values.image = reader.result;
+const AddNewPost = () => {
+  const { addPost } = useContext(PostContext);
+  const history = useHistory();
+
+  const handleAddNewPost = useCallback(() => {
+    history.push("/");
+  }, [history]);
+
+  const handleImageConversion = async (file) => {
+    const reader = new FileReader();
+
+    // Start reading the file
+    reader.readAsDataURL(file);
+
+    // Wait for either success or error
+    await new Promise((resolve, reject) => {
+      reader.onload = resolve;
+      reader.onerror = reject;
+    });
+
+    return reader.result;
+  };
+
+  const handleSubmit = async (values, actions) => {
     try {
-      // Make an API call to the backend to create a new post
-      const response = await axios.post('http://localhost:3000/api/DetailPage', values);
-      console.log(response.data);
-      addPost(response.data); // Call addPost to update the state
+      const imageBase64 = await handleImageConversion(values.image);
+      const postData = { ...values, image: imageBase64 };
+
+      await addPost(postData);
       actions.resetForm();
       handleAddNewPost();
     } catch (error) {
-      console.error('Error creating post:', error);
+      actions.setStatus({
+        error: "Failed to create post. Please try again.",
+      });
+      console.error("Error creating post:", error);
     }
   };
-};
 
-const AddNewPost = () => {
-  const { addPost } = useContext(PostContext); // Get addPost from PostContext
-  const history = useHistory();
-
-  const handleAddNewPost = () => {
-    history.push('/');
-  };
-
-  const { values, errors, touched, isSubmitting, handleChange, handleBlur, handleSubmit, setFieldValue } = useFormik({
+  const formik = useFormik({
     initialValues: {
-      title: '',
-      author: '',
+      title: "",
+      author: "",
       image: null,
-      content: '',
+      content: "",
     },
     validationSchema: basicSchema,
-    onSubmit: (values, actions) => onSubmit(values, actions, addPost, handleAddNewPost),
+    onSubmit: handleSubmit,
   });
+
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    setFieldValue,
+  } = formik;
 
   return (
     <Container maxWidth="sm">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <Card sx={{ padding: 2, marginTop: 4 }}>
           <CardHeader title="Add New Post" />
           <CardContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <TextField
                 id="title"
                 label="Title"
@@ -70,7 +99,7 @@ const AddNewPost = () => {
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                onChange={handleChange}             
+                onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.author}
                 error={touched.author && Boolean(errors.author)}
@@ -84,7 +113,8 @@ const AddNewPost = () => {
                 fullWidth
                 margin="normal"
                 onChange={(event) => {
-                  setFieldValue("image", event.currentTarget.files[0]);
+                  const file = event.currentTarget.files?.[0];
+                  if (file) setFieldValue("image", file);
                 }}
                 onBlur={handleBlur}
                 InputLabelProps={{
@@ -92,7 +122,7 @@ const AddNewPost = () => {
                 }}
               />
               {touched.image && errors.image && (
-                <div style={{ color: 'red' }}>{errors.image}</div>
+                <div style={{ color: "red" }}>{errors.image}</div>
               )}
               <Textarea
                 id="content"
@@ -107,7 +137,12 @@ const AddNewPost = () => {
                 error={touched.content && Boolean(errors.content)}
                 sx={{ marginBottom: 3, marginTop: 2 }}
               />
-              <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={isSubmitting}
+              >
                 Submit
               </Button>
             </Box>

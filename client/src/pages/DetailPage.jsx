@@ -1,57 +1,77 @@
-import { Card, CardContent, CardHeader, CardMedia, Container, Typography } from '@material-ui/core';
-import React, {  useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Container,
+  Typography,
+} from "@material-ui/core";
+import React, { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { PostContext } from "../components/PostProvider";
+
 const DetailPage = () => {
-    const { id } = useParams();
-    const [post, setPost] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    // const post = posts[id];
-    useEffect(() => {
-        const fetchPost = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3000/api/DetailPage/${id}`);
-                setPost(response.data);
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
+  const { id } = useParams();
+  const { getPostById, loading, error, post } = useContext(PostContext);
 
-        fetchPost();
-    }, [id]);
-    if (!post) {
-        return <Typography variant="h6">Post not found</Typography>;
-    }
+  useEffect(() => {
+    if (!id) return;
+    getPostById(id);
+  }, [id]);
 
-    if (loading) {
-        return <Typography>Loading...</Typography>;
-    }
+  if (loading) {
+    return <LoadingSpinner message="Loading post..." />;
+  }
 
-    if (error) {
-        return <Typography>Error: {error}</Typography>;
-    }
-
-    if (!post) {
-        return <Typography>Post not found</Typography>;
-    }
-
-
+  if (error) {
     return (
-        <Container>
-            <Card>
-                <CardHeader title={post.title} subheader={post.author} />
-                <CardMedia component="img" image={post.image} alt={post.title} height="194" />
-                <CardContent>
-                    <Typography variant="body2">
-                        {post.content}
-                    </Typography>
-                </CardContent>
-            </Card>
-        </Container>
+      <Container>
+        <Typography variant="h6" color="error" align="center">
+          {error}
+        </Typography>
+      </Container>
     );
+  }
+
+  if (!post) {
+    return (
+      <Container>
+        <Typography variant="h6" align="center">
+          Post not found
+        </Typography>
+      </Container>
+    );
+  }
+
+  return (
+    <Container maxWidth="md">
+      <Card elevation={3}>
+        <CardHeader
+          title={post.title}
+          subheader={`Written by ${post.author}`}
+          titleTypographyProps={{ variant: "h4" }}
+          subheaderTypographyProps={{ variant: "subtitle1" }}
+        />
+        <CardMedia
+          component="img"
+          image={post.image}
+          alt={post.title}
+          height="400"
+          sx={{ objectFit: "cover" }}
+        />
+        <CardContent>
+          <Typography
+            variant="body1"
+            component="div"
+            style={{ whiteSpace: "pre-line" }}
+          >
+            {post.content}
+          </Typography>
+        </CardContent>
+      </Card>
+    </Container>
+  );
 };
 
 export default DetailPage;

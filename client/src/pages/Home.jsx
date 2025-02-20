@@ -1,7 +1,6 @@
-
-import React from 'react';
-import Navbar from '../components/Navbar';
-import Posts from '../components/Posts';
+import React from "react";
+import Navbar from "../components/Navbar";
+import Posts from "../components/Posts";
 
 const Home = () => {
   return (
@@ -10,6 +9,6 @@ const Home = () => {
       <Posts />
     </>
   );
-}
+};
 
 export default Home;
