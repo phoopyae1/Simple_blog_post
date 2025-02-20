@@ -5,7 +5,8 @@ import { basicSchema } from '../schemas';
 import { Textarea } from '@mui/joy';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import axios from 'axios'; // Import axios for making API calls
-import { PostContext } from '../components/Posts'; // Import PostContext
+import { PostContext } from '../components/PostProvider';
+
 
 const onSubmit = async (values, actions, addPost, handleAddNewPost) => {
   console.log(values);
@@ -15,7 +16,7 @@ const onSubmit = async (values, actions, addPost, handleAddNewPost) => {
     values.image = reader.result;
     try {
       // Make an API call to the backend to create a new post
-      const response = await axios.post('http://localhost:3000/api/DetailPage', values);
+      const response = await axios.post('http://localhost:3000/api/posts', values);
       console.log(response.data);
       addPost(response.data); // Call addPost to update the state
       actions.resetForm();
@@ -70,7 +71,7 @@ const AddNewPost = () => {
                 variant="outlined"
                 fullWidth
                 margin="normal"
-                onChange={handleChange}
+                onChange={handleChange}             
                 onBlur={handleBlur}
                 value={values.author}
                 error={touched.author && Boolean(errors.author)}

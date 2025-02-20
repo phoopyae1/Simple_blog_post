@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@material-ui/core/styles';
 import Home from './pages/Home';
-import AddNewPost from './pages/AddNewPost';
-import { PostProvider } from './components/Posts'; // Import PostProvider
+import AddNewPost from './pages/AddNewPost'; // Import PostProvider
 import DetailPage from './pages/DetailPage';
+import PostProvider from './components/PostProvider';
 
 const theme = createTheme({
   palette: {
@@ -35,10 +35,10 @@ function App() {
             <Route exact path="/">
               <Home />
             </Route>
-            <Route exact path="/AddNewPost">
+            <Route exact path="/addnewpost">
               <AddNewPost />
             </Route>
-            <Route path="/DetailPage/:id" component={DetailPage} />
+            <Route path="/posts/:id" component={DetailPage} />
           </Switch>
         </Router>
       </PostProvider>

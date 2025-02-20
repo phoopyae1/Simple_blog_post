@@ -11,7 +11,7 @@ const DetailPage = () => {
     useEffect(() => {
         const fetchPost = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/api/DetailPage/${id}`);
+                const response = await axios.get(`http://localhost:3000/api/posts/${id}`);
                 setPost(response.data);
                 setLoading(false);
             } catch (error) {
