@@ -1,11 +1,12 @@
 import React from 'react';
 import { Box, Button, Container, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+
 const Navbar = () => {
     const history = useHistory();
 
     const handleAddNewPost = () => {
-        history.push('/AddNewPost');
+        history.push('/addnewpost');
     };
     return (
         <Container>
